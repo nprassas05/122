@@ -1,0 +1,18 @@
+#use <conio>
+
+int fib(int i) {
+  if (i == 0 || i == 1) {
+    return i;
+  }
+
+  return fib(i - 1) + fib(i - 2);
+}
+
+int main() {
+  int i;
+  for (i = 0; i < 10; i++) {
+    printint(fib(i));
+    print("\n");
+  }
+  return 0;
+}

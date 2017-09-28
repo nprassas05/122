@@ -1,0 +1,5 @@
+int lsr(int x, int k) {
+  int y = x >> k;
+  y = y & (0x7fffffff >> (k - 1));
+  return y;
+}

@@ -1,0 +1,16 @@
+#use <conio>
+
+int[] array(int[] A, int i, int j)
+//@requires i >= 0 && i < \length(A);
+//@requires j >= i && j < \length(A);
+{
+  int n = j - i;
+  int[] partArray = alloc_array(int, n);
+
+  return partArray;
+}
+
+int main()
+{
+  return 0;
+}

@@ -1,0 +1,13 @@
+#use <conio>
+
+int main()
+{
+  int i = 0;
+  int n = 5;
+
+  while (i < n) {
+    printint(i); print("\n");
+    i++;
+  }
+  return 0;
+}

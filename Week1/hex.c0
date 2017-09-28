@@ -1,0 +1,29 @@
+#use <conio>
+#use <string>
+
+string int2hex(int x)
+//@requires x >= 0;
+{
+  string result = "";
+  while (x > 0)
+    //@loop_invariant x >= 0;
+    {
+      int i = x & 0xF;
+      string s = string_fromint(i);
+      if (i >= 10) {
+        s = string_fromchar(char_chr(i + 55));
+      }
+      result = string_join(s, result);
+      x = x >> 4;
+    }
+  return string_join("0x", result);
+}
+
+int main()
+{
+  assert(string_compare(int2hex(148), "0x94") == 0);
+  assert(string_compare(int2hex(50987),"0xC72B") == 0);
+  assert(string_compare(int2hex(14),"0xE") == 0);
+  print("All tests passed!\n");
+  return 0;
+}

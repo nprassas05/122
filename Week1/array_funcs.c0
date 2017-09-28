@@ -1,0 +1,79 @@
+#use <conio>
+
+int[] array(int[] A, int i, int j)
+//@requires i >= 0 && i < \length(A);
+//@requires j >= i && j < \length(A);
+//@ensures \length(\result) == (j - i);
+{
+  int n = j - i;
+  int[] partArray = alloc_array(int, n);
+  
+  for (int k = i; k < j; k++)
+    //@loop_invariant k >= i && k <= j;
+    {
+      partArray[k] = A[k];
+    }
+  return partArray;
+}
+
+int copy_into(int[] source, int i, int n, int[] target, int j)
+//@requires n > 0;
+//@requires i >=0 && i < \length(source);
+//@requires j >= 0 && j <\length(target);
+//@requires i + n <= \length(source);
+//@requires j + n <= \length(target);
+//@ensures \result == j + n - 1;
+{
+  int k = 0;
+  for (; k < n; k++)
+    //@loop_invariant k >=0 && k <= n;
+    //@loop_invariant i + k <= \length(source);
+    //@loop_invariant j + k <= \length(target);
+  {
+    target[j + k] = source[i + k];
+  }
+
+  return k + j - 1;
+}
+
+int can_copy_into(int[] source, int i, int n, int[] target, int j)
+{
+  return 0;
+}
+
+int can_copy_into(int[] source, int i, int[] target, int j, int n)
+{
+  return 0;
+}
+
+int main()
+{
+  int[] A = alloc_array(int, 10);
+  int[] B = alloc_array(int, 10);
+  
+  for (int i = 0; i < 10; i++) {
+    A[i] = 5;
+    B[i] = 10;
+  }
+
+  /* copy 4 elements from A to B, starting at index
+     2 in A and starting index 3 in B */
+  copy_into(A, 2, 7, B, 3);
+
+  for (int i = 0; i < 10; i++) {
+    printint(B[i]);
+    print(" ");
+  }
+  print("\n");
+
+  int[] C = alloc_array(int, 5);
+  for (int i = 0; i < 5; i++) C[i] = 8;
+  int x = copy_into(A, 6, 3, C, 1);
+  printint(x); print("\n");
+  for (int i = 0; i < 5; i++) {
+    printint(C[i]);
+    print(" ");
+  }
+  print("\n");
+  return 0;
+}

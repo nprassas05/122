@@ -1,0 +1,13 @@
+int f(int x, int y)
+//@requires y >= 0;
+{
+  int r = 1;
+  while (y > 0) {
+    if (y % 2 == 1) {
+      r = r * x;
+    }
+    x = x * x;
+    y = y / 2;
+  }
+  return r;
+}

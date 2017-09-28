@@ -1,0 +1,10 @@
+#use <conio>
+
+string int2hex(int x) {
+  
+}
+
+int main()
+{
+  return 0;
+}
