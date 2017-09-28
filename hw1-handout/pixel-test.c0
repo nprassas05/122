@@ -1,0 +1,25 @@
+#use <conio>
+
+int main()
+{
+   pixel p = make_pixel(220, 154, 200, 98);
+   assert(get_alpha(p) == 220);
+   assert(get_red(p) == 154);
+   assert(get_green(p) == 200);
+   assert(get_blue(p) == 98);
+
+   p = make_pixel(255, 0, 0, 255);
+   assert(get_alpha(p) == 255);
+   assert(get_red(p) == 0);
+   assert(get_green(p) == 0);
+   assert(get_blue(p) == 255);
+
+
+   p = make_pixel(0, 0, 0, 0);
+   assert(get_alpha(p) == 0);
+   assert(get_red(p) == 0);
+   assert(get_green(p) == 0);
+   assert(get_blue(p) == 0);
+
+   return 0;
+}

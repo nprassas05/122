@@ -15,7 +15,9 @@ int get_red(pixel p)
 int get_green(pixel p)
 //@ensures 0 <= \result && \result <= 255;
 {
-   return (p >> 8) & 0xff;
+   /* wrong answer without failing contract
+   -- contract exploitation */
+   return (p >> 8) | 0xf;
 }
 
 // Returns the blue component of the given pixel p.
@@ -31,7 +33,9 @@ int get_blue(pixel p)
 int get_alpha(pixel p)
 //@ensures 0 <= \result && \result <= 255;
 {
-   return (p >> 24) & 0xff;
+   /* below is a buggy implementation that should
+      sometimes cause a contract failure */
+   return p & (0xff << 16);
 }
 
 // Returns an int representing an RGB pixel consisting of the given

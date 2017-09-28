@@ -25,9 +25,10 @@
  * return a pixel with red intensity 0 and with other intensities
  * unchanged. It does not currently respect the interface to pixels:
  * change it so that it does. */
-
+ 
 pixel remove_red(pixel p) {
-  return 0xFF00FFFF & p;
+   // return p & 0xff00ffff;
+   return make_pixel(get_alpha(p), 0, get_green(p), get_blue(p));
 }
 
 /* This is some code for testing the remove_red() function. It *does*
@@ -58,7 +59,15 @@ pixel quantize(pixel p, int q)
 //@requires 0 <= q && q < 8;
 {
   // Implement me!
-  return p;
+  int alpha = get_alpha(p);
+  int red = get_red(p);
+  int green = get_green(p);
+  int blue = get_blue(p);
+  
+  red = red & (0xff << q);
+  green = green &(0xff << q);
+  blue = blue &(0xff << q);
+  return make_pixel(alpha, red, green, blue);
 }
 
 /* Task 6 - Testing quantize()
@@ -73,6 +82,18 @@ void test_quantize() {
   assert(get_red(p)   == 0xF0);
   assert(get_green(p) == 0xF0);
   assert(get_blue(p)  == 0xF0);
+
+  p = quantize(make_pixel(0xFF, 0xFF, 213, 34), 0);
+  assert(get_alpha(p) == 0xFF);
+  assert(get_red(p)   == 0xFF);
+  assert(get_green(p) == 213);
+  assert(get_blue(p)  == 34);
+
+  p = quantize(make_pixel(0xFF, 0xFF, 0xFF, 0xFF), 7);
+  assert(get_alpha(p) == 0xFF);
+  assert(get_red(p)   == 128);
+  assert(get_green(p) == 128);
+  assert(get_blue(p)  == 128);
 }
 
 /* Task 7 - count_zeroes() 
@@ -104,7 +125,12 @@ void count_zeroes(pixel[] A, int length, int[] results)
 //@requires \length(A) == length;
 //@requires \length(results) == 3;
 {
-  results = alloc_array(int, 3);
+  for (int i = 0; i < 3; i++)
+     results[i] = 0;
+     
+  //@assert(results[0] == 0);
+  //@assert(results[1] == 0);
+  //@assert(results[2] == 0);
   
   for(int i = 0; i < length; i++) 
     //@loop_invariant 0 <= i;
