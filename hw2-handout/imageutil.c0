@@ -50,7 +50,7 @@ int get_column(int index, int width, int height)
 bool is_valid_pixel(int row, int col, int width, int height)
 //@requires is_valid_imagesize(width, height);
 {
-  return row < height && col < width;
+  return row >= 0 && row < height && col >= 0 && col < width;
 }
 
 // Returns the index of a pixel in a one-dimensional array of pixels

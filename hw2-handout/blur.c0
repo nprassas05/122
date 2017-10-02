@@ -1,0 +1,78 @@
+pixel intensify(pixel[] pixels, int index, int width, int height,
+                int[] mask, int maskwidth)
+//@requires is_valid_imagesize(width, height);
+//@requires \length(pixels) == width * height;
+//@requires index >= 0 && index < \length(pixels);
+//@requires \length(mask) == maskwidth * maskwidth;
+//@requires \length(mask) % 2 == 1;
+//@requires mask[(maskwidth * maskwidth) / 2] > 0;
+{ 
+  int row = get_row(index, width, height);
+  int col = get_column(index, width, height);
+
+  int maskLen = maskwidth * maskwidth;
+  int maskOrigIndex = maskLen / 2;
+  int maskOriginRow = get_row(maskOrigIndex , maskwidth, maskwidth);
+  int maskOriginCol = get_column(maskOrigIndex , maskwidth, maskwidth);
+
+  int totalWeight = 0;
+  int redIntensity = 0;
+  int greenIntensity = 0;
+  int blueIntensity = 0;
+  
+  /* check the 8 possible neighbors of the pixel.  For valid neighbor pixels,
+     add the product of pixel intensity with mask weight to the running totals 
+     for each color channel */
+  for (int i = 0; i < maskLen; i++)
+  //@loop_invariant i >= 0 && i <= \length(mask);
+  //@loop_invariant i == 0 || mask[i - 1] >= 0;
+  {
+    int maskRow = get_row(i, maskwidth, maskwidth);
+    int maskCol = get_column(i, maskwidth, maskwidth);
+    
+    int rowDiff = maskRow - maskOriginRow;
+    int colDiff = maskCol - maskOriginCol;
+    
+    int pixelRow = row + rowDiff;
+    int pixelCol = col + colDiff;
+    
+    if (is_valid_pixel(pixelRow, pixelCol, width, height))
+    {
+      int pixelIndex = get_index(pixelRow, pixelCol, width, height);
+      pixel p = pixels[pixelIndex];
+      totalWeight = totalWeight + mask[i];
+      redIntensity = redIntensity + (get_red(p) * mask[i]);
+      greenIntensity = greenIntensity + (get_green(p) * mask[i]);
+      blueIntensity = blueIntensity + (get_blue(p) * mask[i]);
+    }
+  }
+
+  redIntensity = redIntensity / totalWeight;
+  greenIntensity = greenIntensity / totalWeight;
+  blueIntensity = blueIntensity / totalWeight;
+  //@assert redIntensity >= 0 && redIntensity <= 255;
+  //@assert greenIntensity >= 0 && greenIntensity <= 255;
+  //@assert blueIntensity >= 0 && blueIntensity <= 255;
+  
+  int originalAlpha = get_alpha(pixels[index]);
+  return make_pixel(originalAlpha, redIntensity, greenIntensity, blueIntensity);
+}
+
+pixel[] blur(pixel[] pixels, int width, int height,
+             int[] mask, int maskwidth)
+//@requires is_valid_imagesize(width, height);
+//@requires \length(pixels) == width * height;
+//@requires \length(mask) == maskwidth * maskwidth;
+//@requires \length(mask) % 2 == 1;
+//@requires mask[(maskwidth * maskwidth) / 2] > 0;
+//@ensures \length(\result) == \length(pixels);
+{
+  pixel[] blurredPixels = alloc_array(int, width * height);
+  
+  for (int i = 0; i < width * height; i++) {
+    pixel intensePixel = intensify(pixels, i, width, height, mask, maskwidth);
+    blurredPixels[i] = intensePixel;
+  }
+         
+  return blurredPixels;
+}
