@@ -1,0 +1,52 @@
+#use <conio>
+#use <util>
+
+void checkRotate90()
+{
+  pixel[] A = alloc_array(int, 4);
+  A[0] = make_pixel(5, 5, 5, 5);
+  A[1] = make_pixel(10, 10, 10, 10);
+  A[2] = make_pixel(15, 15, 15, 15);
+  A[3] = make_pixel(20, 20, 20, 20);
+  
+  pixel[] B = rotate90Clockwise(A, 2, 2);
+  assert(get_red(B[0]) == 15);
+  assert(get_blue(B[1]) == 5);
+  assert(get_green(B[2]) == 20);
+  assert(get_alpha(B[3]) == 10);
+}
+
+void checkRotation()
+{
+  pixel[] A = alloc_array(int, 4);
+  A[0] = make_pixel(5, 5, 5, 5);
+  A[1] = make_pixel(10, 10, 10, 10);
+  A[2] = make_pixel(15, 15, 15, 15);
+  A[3] = make_pixel(20, 20, 20, 20);
+
+  pixel[] B = rotate(A, 2, 2);
+  
+  assert(get_red(B[0]) == 10);
+  assert(get_blue(B[1]) == 20);
+  assert(get_green(B[2]) == 5);
+  assert(get_alpha(B[3]) == 10);
+  assert(get_red(B[4]) == 5);
+  assert(get_blue(B[5]) == 15);
+  assert(get_green(B[6]) == 15);
+  assert(get_alpha(B[7]) == 20);
+  assert(get_red(B[8]) == 20);
+  assert(get_blue(B[9]) == 15);
+  assert(get_green(B[10]) == 15);
+  assert(get_alpha(B[11]) == 5); 
+  assert(get_red(B[12]) == 10);
+  assert(get_blue(B[13]) == 5);
+  assert(get_green(B[14]) == 20);
+  assert(get_alpha(B[15]) == 10);
+}
+
+int main()
+{
+  checkRotate90();
+  checkRotation();
+  return 0;
+}

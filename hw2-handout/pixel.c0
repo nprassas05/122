@@ -1,0 +1,56 @@
+/* The pixel type and an interface to pixels */
+
+typedef int pixel;
+
+// Returns the red component of the given pixel p.
+// POSTCONDITION: returned value is between 0 and 255, inclusive.
+int get_red(pixel p)
+//@ensures 0 <= \result && \result <= 255;
+{
+   return (p >> 16) & 0xff;
+}
+
+// Returns the green component of the given pixel p.
+// POSTCONDITION: returned value is between 0 and 255, inclusive.
+int get_green(pixel p)
+//@ensures 0 <= \result && \result <= 255;
+{
+   return (p >> 8) & 0xff;
+}
+
+// Returns the blue component of the given pixel p.
+// POSTCONDITION: returned value is between 0 and 255, inclusive.
+int get_blue(pixel p)
+//@ensures 0<= \result && \result <= 255;
+{
+   return p & 0xff;
+}
+
+// Returns the alpha component of the given pixel p.
+// POSTCONDITION: returned value is between 0 and 255, inclusive.
+int get_alpha(pixel p)
+//@ensures 0 <= \result && \result <= 255;
+{
+   return (p >> 24) & 0xff;
+}
+
+// Returns an int representing an RGB pixel consisting of the given
+// alpha, red, green and blue intensity values.
+// PRECONDITION: all intensity values must be between 0 and 255,
+// inclusive.
+pixel make_pixel(int alpha, int red, int green, int blue)
+//@requires (alpha >= 0 && alpha <= 255);
+//@requires(red >= 0 && red <= 255);
+//@requires(green >= 0 && green <= 255);
+//@requires(blue >= 0 && blue <= 255);
+{
+   pixel p = 0;
+   p += alpha;
+   p <<= 8;
+   p += red;
+   p <<= 8;
+   p += green;
+   p <<= 8;
+   p += blue;
+   return p;
+}

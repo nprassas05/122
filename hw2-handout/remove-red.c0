@@ -10,7 +10,7 @@ pixel[] remove_red (pixel[] A, int width, int height)
 //@ensures \length(\result) == \length(A);
 {
   pixel[] B = alloc_array(pixel, width*height);
-
+  
   for (int j = 0; j < height; j++)
     //@loop_invariant 0 <= j;
     {

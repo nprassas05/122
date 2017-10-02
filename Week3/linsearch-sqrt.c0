@@ -1,0 +1,24 @@
+#use <conio>
+
+int sqrt(int n)
+//@requires n >= 0;
+/*@ensures \result * \result <= n
+  && (\result + 1) * (\result + 1) > n;
+ @*/
+{
+  int i = 0;
+  while ((i + 1) * (i + 1) <= n)
+    //@loop_invariant i * i <= n;
+  {
+    i = i + 1;
+  }
+  //@assert i * i <= n;
+  return i;
+}
+
+int main()
+{
+  printint(sqrt(16));
+  print("\n");
+  return 0;
+}
