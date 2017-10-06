@@ -1,0 +1,40 @@
+/* This function should return the number of occurrences of words in
+   the file tweetfile that do not appear in the array vocab, and should
+   update the frequency counts in freq with the number of times each
+   word in the vocabulary appears.  Count each occurence separately. */
+int count_vocab(string[] vocab, int[] freq, int v,
+                string tweetfile,
+                bool fast)
+//@requires v == \length(vocab) && v == \length(freq);
+//@requires is_sorted(vocab, 0, v) && all_distinct(vocab, v);
+//@ensures 0 <= \result;
+//@ensures \result <= string_bundle_length(read_words(tweetfile));
+{
+  string_bundle sb = read_words(tweetfile);
+  int sbLength = string_bundle_length(sb);
+  string[] tweet = string_bundle_array(sb);
+  int nonVocabOccurrences = 0;
+
+  for (int i = 0; i < sbLength; i++)
+    //@loop_invariant i >= 0 && i <= \length(tweet);
+    {
+      string searchString = tweet[i];
+      int index;
+
+      if (fast == true)
+        index = binsearch(searchString, vocab, v);
+      else
+        index = linsearch(searchString, vocab, v);
+
+      if (index == -1) {
+        // assert !is_in(searchString, vocab, 0, v) <-- pseudo code
+        nonVocabOccurrences++;
+      }
+      else {
+        // assert(vocab[index] == searchString) <-- pseudo code
+        freq[index]++;
+      }
+    }
+
+  return nonVocabOccurrences;
+}

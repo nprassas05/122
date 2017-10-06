@@ -1,0 +1,48 @@
+#use <conio>
+#use <util>
+#use <string>
+
+void testAllDistinct()
+{
+  string[] A = alloc_array(string, 8);
+  A[0] = "apple";
+  A[1] = "apple";
+  A[2] = "apple";
+  A[3] = "banana";
+  A[4] = "orange";
+  A[5] = "orange";
+  A[6] = "pear";
+  A[7] = "tomato";
+  
+  assert(all_distinct(A, 8) == false);
+  assert(count_distinct(A, 8) == 5);
+
+  string[] B = alloc_array(string, 0);
+  assert(all_distinct(A, 0) == true);
+  assert(count_distinct(A, 0) == 0);
+
+  string[] C = alloc_array(string, 1);
+  C[0] = "grape";
+  assert(all_distinct(C, 1) == true);
+  assert(count_distinct(A, 1) == 1);
+
+  
+  string[] D = remove_duplicates(A, 8);
+  assert(string_compare(D[0], "apple") == 0);
+  assert(string_compare(D[1], "banana") == 0);
+  assert(string_compare(D[2], "orange") == 0);
+  assert(string_compare(D[3], "pear") == 0);
+  assert(string_compare(D[4], "tomato") == 0);
+
+  D = remove_duplicates(B, 0);
+  D = remove_duplicates(C, 1);
+
+  assert(string_compare(D[0], "grape") == 0);
+   
+}
+
+int main()
+{
+  testAllDistinct();
+  return 0;
+}

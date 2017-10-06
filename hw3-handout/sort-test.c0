@@ -1,0 +1,26 @@
+#use <conio>
+#use <string>
+#use <util>
+
+void testSort1()
+{
+  string[] A = alloc_array(string, 5);
+  A[0] = "zack";
+  A[1] = "betty";
+  A[2] = "john";
+  A[3] = "dylan";
+  A[4] = "mike";
+  sort(A, 0, 5);
+
+  assert(string_compare(A[0], "betty") == 0);
+  assert(string_compare(A[1], "dylan") == 0);
+  assert(string_compare(A[2], "john") == 0);
+  assert(string_compare(A[3], "mike") == 0);
+  assert(string_compare(A[4], "zack") == 0);
+}
+
+int main()
+{
+  testSort1();
+  return 0;
+}

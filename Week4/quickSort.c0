@@ -1,0 +1,87 @@
+int partition(int[] A, int lower, int pivot_index, int upper)
+//@requires 0 <= lower && lower <= pivot_index;
+//@requires pivot_index < upper && upper <= \length(A);
+//@ensures \result >= lower && \result < upper;
+//@ensures ge_seg(A[\result], A, lower, \result);
+//@ensures le_seg(A[\result], A, \result + 1, upper);
+{
+  swap(A, lower, pivot_index);
+  int pivotElem = A[lower];
+  int left = lower + 1;
+  int right = upper;
+
+  while (left < right)
+    //@loop_invariant lower + 1 <= left && left <= right && right <= upper;
+    //@loop_invariant ge_seg(pivotElem, A, lower + 1, left);
+    //@loop_invariant le_seg(pivotElem, A, right, upper);
+    {
+      if (A[left] > pivotElem)
+        {
+          swap(A, left, right - 1);
+          right--;
+        }
+      else
+        {
+          left++;
+        }
+    }
+
+  //@assert left == right;
+  swap(A, lower, left - 1);
+  return left - 1;
+}
+
+int partition2(int[] A, int lower, int pivot_index, int upper)
+//@requires 0 <= lower && lower <= pivot_index;
+//@requires pivot_index < upper && upper <= \length(A);
+//@ensures \result >= lower && \result < upper;
+//@ensures ge_seg(A[\result], A, lower, \result);
+//@ensures le_seg(A[\result], A, \result + 1, upper);
+{
+  swap(A, lower, pivot_index);
+  int pivot = A[lower];
+
+  int[] temp = alloc_array(int, upper - lower);
+  int left = 0;
+  int right = upper - lower - 1;
+
+  for (int i = lower + 1; i < upper; i++)
+    //@loop_invariant 0 <= left && left <= right && right < upper - lower;
+    //@loop_invariant ge_seg(pivot, temp, 0, left);
+    //@loop_invariant le_seg(pivot, temp, right + 1, upper - lower);
+    {
+      if (A[i] <= pivot)
+        {
+          temp[left] = A[i];
+          left++;
+        }
+      else
+        {
+          temp[right] = A[i];
+          right--;
+        }
+    }
+
+  //@assert left == right;
+  temp[left] = pivot;
+  for (int i = lower; i < upper; i++)
+    {
+      A[i] = temp[i - lower];
+    }
+
+  //@assert lower + left < upper;
+  return lower + left;
+}
+
+void sort(int[] A, int lower, int upper)
+//@requires 0 <= lower && lower <= upper && upper <= \length(A);
+//@ensures is_sorted(A, lower, upper);
+{
+  if (upper - lower <= 1) return;
+  int pivot_index = lower + (upper - lower) / 2;
+
+  int mid = partition2(A, lower, pivot_index, upper);
+  sort(A, lower, mid);
+  sort(A, mid + 1, upper);
+  return;
+}
