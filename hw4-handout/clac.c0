@@ -10,6 +10,62 @@
 #use <args>
 #use <util>
 
+void skip(queue Q, stack S)
+{
+  if (stack_empty(S))
+    error("Not enough elements in stack for operation");
+  int n = pop(S);
+  if (n < 0)
+    error("Illegal negative number for skip operation");
+  for (int i = 0; i < n; i++) {
+    if (queue_empty(Q))
+      error("Not enough elemments in stack for operation");
+    deq(Q);
+  }
+}
+
+void ifLogic(queue Q, stack S)
+{
+  int skipNum = 0;
+  int x = pop(S);
+  
+  if (x <= 0)
+    skipNum = 2;
+  
+  push(S, skipNum);
+  skip(Q, S);
+}
+
+void elseLogic(queue Q, stack S)
+{
+  push(S, 1);
+  skip(Q, S);
+}
+
+/* pick the n'th element in the stack and put it on top
+   of the stack, excluding the initial value of n
+   taken from the top of the stack.
+*/
+void pick(stack S)
+{
+  if (stack_empty(S))
+    error("Not enough elements in stack for operation");
+  int n = pop(S);
+  if (n < 0)
+    error("Illegal negative number for pick operation");
+  stack temp = stack_new();
+  
+  for (int i = 0; i < n; i++) {
+    if (stack_empty(S))
+      error("Not enough elements in stack for operation");
+    push(temp, pop(S));
+  }
+
+  while (!stack_empty(temp)) {
+    push(S, pop(temp));
+  }
+}
+
 /* Return true: clac top-level interpreter will expect more input */
 /* Return false: clac top-level interpreter will exit */
 bool eval(queue Q, stack S)
@@ -21,11 +77,115 @@ bool eval(queue Q, stack S)
     if (string_equal(tok, "print")) {
 
       /* next line is unsafe and should be fixed */
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
       int x = pop(S);
       printint(x); print("\n");
-    } else if (string_equal(tok, "quit")) {
+    }
+    else if (string_equal(tok, "quit")) {
       return false;             /* do not continue */
-    } else {
+    }
+    else if (string_equal(tok, "drop")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      pop(S);
+    }
+    else if (string_equal(tok, "dup")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      push(S, x);
+      push(S, x);
+    }
+    else if (string_equal(tok, "swap")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int y = pop(S);
+      push(S, x);
+      push(S, y);
+    }
+    else if (string_equal(tok, "rot")) {
+      int[] arr = alloc_array(int, 3);
+      for (int i = 0; i < 3; i++) {
+        if (stack_empty(S))
+          error("Not enough elements in stack for operation");
+        arr[i] = pop(S);
+      }
+      push(S, arr[1]);
+      push(S, arr[0]);
+      push(S, arr[2]);
+    }
+    else if (string_equal(tok, "+")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      push(S, x + pop(S));
+    }
+    else if (string_equal(tok, "-")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      push(S, pop(S) - x);
+    }
+    else if (string_equal(tok, "*")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      push(S, x * pop(S));
+    }
+    else if (string_equal(tok, "/")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int y = pop(S);
+      if (x == 0 || (x == -1 && y == int_min()))
+        error("Overflow error: Illegal Division");
+      push(S, y / x);
+    }
+    else if (string_equal(tok, "%")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int y = pop(S);
+      if (x == 0 || (x == -1 && y == int_min()))
+        error("Overflow error: Illegal Division");
+      push(S, y % x);
+    }
+    else if (string_equal(tok, "<")) {
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int x = pop(S);
+      if (stack_empty(S))
+        error("Not enough elements in stack for operation");
+      int y = pop(S);
+      if (y < x)
+        push(S, 1);
+      else
+        push(S, 0);
+    }
+    else if (string_equal(tok, "if")) {
+      ifLogic(Q, S);
+    }
+    else if (string_equal(tok, "else")) {
+      elseLogic(Q, S);
+    }
+    else if (string_equal(tok, "pick")) {
+      pick(S);
+    }
+    else {
       /* not defined as an operation name, should be an int */
       int* p = parse_int(tok, 10);
       if (p == NULL) { /* not an int */
