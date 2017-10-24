@@ -1,0 +1,40 @@
+#use <conio>
+#use <util>
+
+int main()
+{
+  print("hello world\n");
+  ht my_ht = ht_new(10);
+  elem e = alloc(struct wcount);
+  e->word = "hey";
+  e->count = 5;
+  ht_insert(my_ht, e);
+
+  elem e2 = alloc(struct wcount);
+  e2-> word = "pillar";
+  e2->count = 15;
+  ht_insert(my_ht, e2);
+
+  elem e3 = alloc(struct wcount);
+  e3->word = "minimee";
+  e3->count = 45;
+  ht_insert(my_ht, e3);
+
+  elem e4 = alloc(struct wcount);
+  e4->word = "kanye";
+  e4->count = 8;
+  ht_insert(my_ht, e4);
+  elem[] entries = ht_tabulate(my_ht);
+  //int numElems = ht_size(my_ht);
+  //for (int i = 0; i < numElems; i++)
+  ////@loop_invariant i >= 0 && i <= \length(entries);
+  //{
+     //elem u = entries[i];
+     //print(u->word);
+     //print(": ");
+     //printint(u->count);
+     //print("\n");
+  //}
+
+  return 0;
+}
