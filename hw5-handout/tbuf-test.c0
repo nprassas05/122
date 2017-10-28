@@ -1,0 +1,63 @@
+/*
+ * The main driver for the tbuf benchmark: see expected.txt for
+ * expected output.
+ * 
+ * cc0 -d -w -x gapbuf.c0 dll_pt.c0 tbuf.c0 visuals.c0 tbuf-test.c0
+ * 
+ * 15-122 Principles of Imperative Computation */
+
+#use <conio>
+#use <string>
+
+int main() {
+  tbuf B = tbuf_new();
+  visualize_tbuf(B);
+  
+  ins(B, 'a');
+  ins(B, 'b');
+  ins(B, 'c');
+  
+  left(B);
+  del(B);
+  del(B);
+  del(B); // extra
+  
+  left(B); // extra
+  right(B);
+  right(B); // extra
+  
+  del(B);
+  del(B); // extra
+  
+  for (int i = char_ord('a'); i <= char_ord('h'); i++) ins(B, char_chr(i));
+  for (int i = char_ord('A'); i <= char_ord('H'); i++) ins(B, char_chr(i));
+  right(B);
+  for (int i = 0; i < 20; i++) left(B);
+  right(B);
+  right(B);
+  right(B);
+  // splits the point cell with the point ending up in the right half
+  for (int i = char_ord('1'); i <= char_ord('8'); i++) ins(B, char_chr(i));
+  ins(B, '#');
+  
+  for (int i = char_ord('W'); i <= char_ord('Z'); i++) ins(B, char_chr(i));
+  for (int i = 0; i < 4; i++) left(B);
+  // splits the point cell with the point ending up in the left half
+  for (int i = char_ord('w'); i <= char_ord('z'); i++) ins(B, char_chr(i));
+  ins(B, '#');
+  
+  for (int i = 0; i < 10; i++) del(B); // last one moves point cell left
+  right(B);
+  del(B); // deletes point cell
+  
+  for (int i = 0; i < 8; i++) del(B); // deletes point cell at start
+  
+  for (int i = 0; i < 17; i++) right(B);
+  for (int i = 0; i < 8; i++) del(B); // deletes point cell at end
+  
+  for (int i = 0; i < 8; i++) del(B); // deletes all remaining characters
+  
+  del(B); // extra
+  
+  return 0;
+}

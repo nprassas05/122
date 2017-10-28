@@ -1,0 +1,136 @@
+/*
+ * Doubly linked lists with point
+ * 
+ * A text buffer is a doubly linked list (dll), where one of the
+ * elements in the dll is designated as containing the point.  The
+ * list is terminated on both ends with dummy nodes whose contents are
+ * never inspected.
+ * 
+ * 15-122 Principles of Imperative Computation */
+
+/*** Interface ***/
+
+typedef struct dll_node dll;
+struct dll_node {
+  elem data; /* This is defined elsewhere (gapbuf.c0 or elem-char.c0) */
+  dll* next;
+  dll* prev;
+};
+
+typedef struct dll_pt_header* dll_pt;
+struct dll_pt_header {
+  dll* start; /* the fist node of the list (on the left)  */
+  dll* point; /* the current node (where the cursor is)   */
+  dll* end;   /* the last node of the list (on the right) */
+};
+
+bool is_dll_pt(struct dll_pt_header* B);
+
+bool dll_pt_at_left(dll_pt B);  /* Returns true if the point is the        */
+                                /*   first (non-terminal) node of the list */
+bool dll_pt_at_right(dll_pt B); /* Returns true if the point is the        */
+                                /*   last (non-terminal) node of the list  */
+
+void dll_pt_forward(dll_pt B);  /* Moves the point forward, to the right   */
+void dll_pt_backward(dll_pt B); /* Moves the point backward, to the left   */
+void dll_pt_delete(dll_pt B);   /* Remove the point node from the list     */
+
+bool is_dll_segment(dll* a, dll* b)
+{
+  dll* temp;
+  
+  if (a == NULL || b == NULL) return false;
+  while(a != b) {
+    if (a == NULL || a->next == NULL) return false;
+    temp = a->next;
+    /* check that prev links mirror next links by making
+       sure that a's next node has a prev pointer pointing back at a */
+    if (temp->prev != a) return false;
+    a = temp;
+  }
+  return true;
+}
+
+/*** Implementation ***/
+bool is_dll_pt(struct dll_pt_header* B)
+{
+  /* make sure the next links proceed from the start node to end node */
+  if (!is_dll_segment(B->start, B->end)) return false;
+
+  /* make sure that the point node is passed along the way in the path
+     from the start node to end node */
+  if (!is_dll_segment(B->start, B->point)) return false;
+  if (!is_dll_segment(B->point, B->end)) return false;
+
+  /* make sure the point node is distinct from the start and end nodes */
+  if (B->point == B->start || B-> point == B->end) return false;
+
+  return true;
+}
+
+/* Returns true if the point is the
+  first (non-terminal) node of the list */
+bool dll_pt_at_left(dll_pt B)
+//@requires is_dll_pt(B);
+{
+  return B->point == B->start->next;
+}
+
+/* Returns true if the point is the */
+/* last (non-terminal) node of the list  */
+bool dll_pt_at_right(dll_pt B)
+//@requires is_dll_pt(B);
+{
+  return B->point == B->end->prev;
+}
+
+/* Moves the point forward, to the right */
+void dll_pt_forward(dll_pt B)
+//@requires is_dll_pt(B);
+//@ensures is_dll_pt(B);
+{
+  B->point = B->point->next;
+}
+
+ /* Moves the point backward, to the left */
+void dll_pt_backward(dll_pt B)
+//@requires is_dll_pt(B);
+//@ensures is_dll_pt(B);
+{
+  B->point = B->point->prev;
+}
+
+/* Remove the point node from the list */
+void dll_pt_delete(dll_pt B)
+//@requires is_dll_pt(B);
+//@ensures is_dll_pt(B);
+{
+  /* point cannot be deleted if it is the only non-terminator node */
+  //@assert !(dll_pt_at_right(B) && dll_pt_at_left(B));
+
+  /* If the the point is at the far left, we must set the new point 
+     to the right of point.  If the point is at the far right, we 
+     must set the new point to the left of point.  Otherwise,
+     we could set the new point to either side of point */
+  dll* pointNew;
+  if (dll_pt_at_left(B))
+    {
+      pointNew = B->point->next;
+      B->start->next = pointNew;
+      pointNew->prev = B->start;
+    }
+  else if (dll_pt_at_right(B))
+    {
+      pointNew = B->point->prev;
+      pointNew->next = B->end;
+      B->end->prev = pointNew;
+    }
+  else
+    {
+      pointNew = B->point->prev;
+      pointNew->next = B->point->next;
+      B->point->next->prev = pointNew;
+    }
+
+  B->point = pointNew;
+}

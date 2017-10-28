@@ -1,0 +1,23 @@
+#use <conio>
+#use <string>
+
+int main()
+{
+  gapbuf g = gapbuf_new(16);
+  assert(gapbuf_empty(g));
+  for (int i = 0; i < 16; i++)
+    {
+      gapbuf_insert(g, 'a');
+    }
+  assert(gapbuf_full(g));
+
+  /* here we will test that moving the gap buffer(cursor)
+     does not change the fact that the buffer is full */
+  for (int i = 0; i < 16; i++)
+    {
+      gapbuf_backward(g);
+    }
+  assert(gapbuf_full(g));
+  
+  return 0;
+}
