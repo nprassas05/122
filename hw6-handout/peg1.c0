@@ -7,8 +7,25 @@
 #use <conio>
 #use <util>
 
-typedef ____ move;
+struct move_header {
+  int jumpedFromRow;
+  int jumpedFromCol;
+  int jumpedToRow;
+  int jumpedToCol;
+};
+typedef struct move_header* move;
 
+move move_new(int row1, int col1, int row2, int col2)
+{
+  move m = alloc(struct move_header);
+  m->jumpedFromRow = row1;
+  m->jumpedFromCol = col1;
+  m->jumpedToRow = row2;
+  m->jumpedToCol = col2;
+  return m;
+}
+
+/* Interface */
 int row_start(move m)
   ;
 
@@ -26,5 +43,140 @@ int peg_solve(board B, stack S)
 //@requires num_pegs(B) >= 1;
 //@requires stack_empty(S);
 //@ensures is_board(B);
-//@ensures result >= 1;
+//@ensures \result >= 1;
   ;
+
+int peg_solve_helper(board B, stack S, int pegsRemaining)
+//@requires is_board(B);
+//@requires num_pegs(B) >= 1;
+//@ensures is_board(B);
+//@ensures \result >= 1;
+  ;
+
+stack valid_moves(board B)
+//@requires is_board(B);
+  ;
+
+bool legal(board B, int row1, int col1, int row2, int col2)
+//@requires is_board(B);
+  ;
+
+bool is_coordinate(int x)
+  ;
+
+/* Implementation */
+/* the following routines assume
+   an 8 X 8 solitaire board */
+int row_start(move m)
+{
+  return m->jumpedFromRow;
+}
+
+int col_start(move m)
+{
+  return m->jumpedFromCol;
+}
+
+int row_end(move m)
+{
+  return m->jumpedToRow;
+}
+
+int col_end(move m)
+{
+  return m->jumpedToCol;
+}
+
+int peg_solve(board B, stack S)
+{
+  /* start with 32 pegs */
+  return peg_solve_helper(B, S, num_pegs(B));
+}
+
+int peg_solve_helper(board B, stack S, int pegsRemaining)
+{
+  /* base case, if we down to 1 peg remaining,
+     we have found a solution */
+  if (pegsRemaining == 1) {
+    return 1;
+  }
+
+  /* get the valid moves that could be made from out current board */
+  stack nextMoves = valid_moves(B);
+  if (stack_empty(nextMoves))
+    return pegsRemaining;
+
+  /* for this first version, we will only pop the first possible
+     move from the stack. */
+  move m = pop(nextMoves);
+
+  /*create a new board which will be slightly different from
+    the board passed in once it accounts for the moved popped
+    from the stack.  This new board will be passed through
+    a recursive call */
+  board nextBoard = alloc_array(int, 64);
+  array_copy(nextBoard, B, 64);
+  
+  int from = getIndex(m->jumpedFromRow, m->jumpedFromCol);
+  int to = getIndex(m->jumpedToRow, m->jumpedToCol);
+  nextBoard[from] = 0;
+  nextBoard[to] = 1;
+  nextBoard[(from + to) / 2] = 0;
+
+  int pegsOnBoard = peg_solve_helper(nextBoard, S, pegsRemaining - 1);
+  push(S, m);
+  return pegsOnBoard;
+}
+
+stack valid_moves(board B)
+{
+  stack S = stack_new();
+  for (int row = 0; row < 8; row++)
+    {
+      for (int col = 0; col < 8; col++)
+        { 
+          /* check downward jump */
+          if (legal(B, row, col, row + 2, col))
+            {
+              push(S, move_new(row, col, row + 2, col));
+            }
+          /* check upward jump */
+          if (legal(B, row, col, row - 2, col))
+            {
+              push(S, move_new(row, col, row - 2, col));
+            }
+          /* check left jump */
+          if (legal(B, row, col, row, col - 2))
+            {
+              push(S, move_new(row, col, row, col - 2));
+            }
+          /* check right jump */
+          if (legal(B, row, col, row, col + 2))
+            {
+              push(S, move_new(row, col, row, col + 2));
+            }
+        }
+    }
+  return S;
+}
+
+bool legal(board B, int row1, int col1, int row2, int col2)
+//@requires is_board(B);
+{
+  if (!(is_coordinate(row1) && is_coordinate(col1)
+        && is_coordinate(row2) && is_coordinate(col2)))
+    return false;
+  if (!((abs(row1-row2) == 2 && col1 == col2)
+        || (abs(col1-col2) == 2 && row1 == row2)))
+    return false;
+  int i = 8*row1+col1;
+  int k = 8*row2+col2;
+  int j = (i+k)/2;
+  if (!(B[i] == 1 && B[j] == 1 && B[k] == 0))
+    return false;
+  return true;
+}
+
+bool is_coordinate(int x) {
+  return 0 <= x && x < 8;
+}

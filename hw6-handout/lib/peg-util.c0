@@ -115,3 +115,8 @@ void read_board(string filename, int[] B, int n)
   file_close(file);
   return;
 }
+
+int getIndex(int row, int col)
+{
+  return 8 * row + col;
+}
