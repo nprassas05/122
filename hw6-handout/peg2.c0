@@ -107,7 +107,6 @@ int peg_solve_helper(board B, stack S, int pegsRemaining)
     return pegsRemaining;
 
   move m;
-  board nextBoard = alloc_array(int, 64);
   int minPegsRemaining = pegsRemaining;
 
   /* use backtracking to find out if there is a solution to
@@ -115,14 +114,20 @@ int peg_solve_helper(board B, stack S, int pegsRemaining)
   while (!stack_empty(nextMoves))
     {
       m = pop(nextMoves);
-      array_copy(nextBoard, B, 64);
       int from = getIndex(m->jumpedFromRow, m->jumpedFromCol);
       int to = getIndex(m->jumpedToRow, m->jumpedToCol);
-      nextBoard[from] = 0;
-      nextBoard[to] = 1;
-      nextBoard[(from + to) / 2] = 0;
+      B[from] = 0;
+      B[to] = 1;
+      B[(from + to) / 2] = 0;
 
-      int pegsOnBoard = peg_solve_helper(nextBoard, S, pegsRemaining - 1);
+      int pegsOnBoard = peg_solve_helper(B, S, pegsRemaining - 1);
+      
+      /* after recursive call, set the board back to its original
+         configuration */
+      B[from] = 1;
+      B[to] = 0;
+      B[(from + to)/2] = 1;
+      
       if (pegsOnBoard == 1)
         {
           push(S, m);
