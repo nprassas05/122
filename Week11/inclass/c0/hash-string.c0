@@ -1,0 +1,32 @@
+/* Hash function on strings
+ * 15-122 Principles of Imperative Computation, Spring 2011
+ * Frank Pfenning
+ */
+
+#use <rand>
+#use <string>
+
+int hash_string(string s, int limit)
+//@requires limit > 1;
+//@ensures 0 <= \result && \result < limit;
+{
+  int a = 1664525; int b = 1013904223; /* inlined random number generator */
+  int r = 0x1337beef;                          /* initial seed */
+  int len = string_length(s);
+  int h = 0;                                   /* empty string maps to 0 */
+  for (int i = 0; i < len; i++)
+    //@loop_invariant 0 <= i;
+    {
+      char c = string_charat(s, i);
+      int cv = char_ord(c);
+      h = r*h + cv; /* mod 2^32 */
+      r = r*a + b;  /* mod 2^32, linear congruential random no */
+    }
+
+  /* reduce to range */
+  h = h % limit;
+
+  //@assert -limit < h && h < limit;
+  if (h < 0) h = h + limit;
+  return h;
+}
