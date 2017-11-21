@@ -84,8 +84,17 @@ void resize(struct strbuf* sb, size_t limit)
     {
       buffer[i] = sb->buf[i];
     }
+  
+  free(sb->buf);
   sb->buf = buffer; // garbage collector takes care of the old buf in C0
   sb->limit = limit;
   ENSURES(is_strbuf(sb));
   return;
+}
+
+char *strbuf_dealloc(struct strbuf *sb)
+{
+  char* buffer = sb->buf;
+  free(sb);
+  return buffer;
 }
