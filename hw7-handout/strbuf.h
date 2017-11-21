@@ -24,5 +24,6 @@ char *strbuf_str(struct strbuf *sb);
 
 void strbuf_add(struct strbuf *sb, char *str, size_t len);
 void strbuf_addstr(struct strbuf *sb, char *str);
+void resize(struct strbuf* sb, size_t limit);
 
 #endif

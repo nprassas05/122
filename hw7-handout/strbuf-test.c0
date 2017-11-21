@@ -1,0 +1,26 @@
+#use <args>
+#use <conio>
+#use <rand>
+#use <string>
+
+void test_isstrbuf()
+{
+  struct strbuf* sb = strbuf_new(16);
+  assert(is_strbuf(sb));
+  strbuf_addstr(sb, string_to_chararray("over"));
+  strbuf_addstr(sb, string_to_chararray(" the donkey"));
+  assert(is_strbuf(sb));
+  string s = string_from_chararray(sb->buf);
+
+  char[] mew = strbuf_str(sb);
+  assert(strlen(mew, 0) == sb->len);
+
+  sb->buf = alloc_array(char, 16);
+  assert(!is_strbuf(sb));
+}
+
+int main()
+{
+  test_isstrbuf();
+  return 0;
+}
