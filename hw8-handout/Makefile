@@ -14,6 +14,9 @@ lightsout-d: $(C_LIBS) lib/*.h bitarray.c ba-ht.c lightsout.c
 bitarray-test: $(C_LIBS) lib/*.h bitarray.c bitarray-test.c 
 	$(CCD) -o bitarray-test $(C_LIBS) bitarray.c bitarray-test.c
 
+ht-test: $(C_LIBS) lib/*.h bitarray.c ba-ht.c ba-ht-test.c
+	$(CCD) -o ht-test $(C_LIBS) bitarray.c ba-ht.c ba-ht-test.c
+
 .PHONY: clean
 clean:
 	rm -Rf *.o lib/*.o lightsout lightsout-d bitarray-test *.dSYM

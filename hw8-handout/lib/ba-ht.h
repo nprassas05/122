@@ -1,4 +1,3 @@
-
 /* 
  * Hash tables interface
  *
@@ -29,7 +28,6 @@ typedef bitarray* ba_ht_key; // Cannot be NULL
 /* Creates a new hash table
  */
 ht ba_ht_new(size_t capacity);
-
 
 /* ht_insert(H,e) returns 
  * kicked-out element with key of e, if it exists and 
